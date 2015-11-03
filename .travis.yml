@@ -1,0 +1,28 @@
+sudo: false
+os:
+- linux
+notifications:
+  email: false
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - latexmk
+    - texlive-fonts-recommended
+    - texlive-latex-extra
+    - texlive-fonts-extra
+    - dvipng
+    - texlive-latex-recommended
+    - texlive-humanities
+script:
+- make once
+deploy:
+  provider: releases
+  api_key:
+    secure: DI8LctZJRkYI7osR4O0c+Az8JDyi6T3aT/H1VljYFYIhBkR6aE0Yu+65zwFj1lZgLYPLAjVYBPGph5PBe46qUR6govgRLD1jYvCK+dfTi85ubhdgZ7iLkhsux0N6LGQt2gyFwJzQARu0T35nwoJb3A3T+hYX+ScG0gP0T/J+WUj11WMZ2uVooU8JMv6AW6SoFKwa2osuzfQBcYeGGue9jvn/amB+FRpMTUiivevYVtB/9Pfd/fnrl+5a4uzFIgAmEr0fBmtqdNrJ9ZDNNWgXVG49FhRHnCjoAkko+JCtu/4qwVO0KY6JIVHnu+fGqvXO80zjxR71RWIr8bu2Z5ETTGVr4oowTdNzPyIljAmqSPbxInvGRW0nc9oa4X64ILKlnocFa8yVeE+/a/EJkN0CgFNBBZuOrYiYRtoZgsVmlJqCLOX95u2pUti+Rrra1PnWFR79FZwm5boRPnOs+Z3ZILtcS14R2Nj5J3rgRZMNNeh/+3W05sKSZUwsSJnpGgP5diQ80TWzxfEwv3yqBNWbWtEWG00jn773K11+KSnzrcEiYzv3oLjzpp3tbOuOg9ta8C13DWqPFSqh7t44agorLpbNNEjjxP6WMeFHn17ep2HM8MRCfDdo7Jirpx1xkaqSYsRBwLxzM4SmTfb7AxDRiK0kUcQ3baripRY6na80rAo=
+  file:
+  - vic_manuscript.pdf
+  skip_cleanup: true
+  on:
+    tags: true
