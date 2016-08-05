@@ -145,69 +145,90 @@
 
   VIC has been applied in a broad set of use cases.
   Examples of VIC applications include the construction of hydrologic data sets, trend analysis, data evaluation and assimilation, forecasting, coupled climate modeling, and climate change impact analysis.
-  The VIC model has been tested extensively using point observational data from sites like the First ISLSCP Field Experiment (FIFE) \citep{Liang_1994}, and through participation in the World Climate Research Program (WCRP) Project for the Intercomparison of Land Parameterization Schemes (PILPS) \citep[.e.g.][]{Bowling_2003,wood_1998}
-  The model has been used for numerous water and energy balance studies in the U.S. \citep{Abdulla_1997,Nijssen_1997}, the arctic \citep{Adam_2008,Su_2005,Tan_2011} and globally \citep{Nijssen_2001a,Nijssen_2001b,Nijssen_2001c,Sheffield_2009}.
+  The VIC model has been tested extensively using point observational data from sites like the First ISLSCP Field Experiment \citep[FIFE;][]{Liang_1994}, and through participation in the World Climate Research Program (WCRP) Project for the Intercomparison of Land Parameterization Schemes \citep[PILPS; .e.g.][]{Bowling_2003,wood_1998}.
+  The model has been used for numerous water and energy balance studies in the U.S. \citep{Abdulla_1997,Nijssen_1997}, the arctic \citep{Adam_2008,Su_2005,Tan_2011,Hamman_2016a} and globally \citep{Nijssen_2001a,Nijssen_2001b,Nijssen_2001c,Sheffield_2009}.
   One result of these studies has been refinement of the model to better represent key hydrological processes \citep{Andreadis_2009,Cherkauer_2003,Liang_1996,Liang_1999}.
-  Ongoing realtime applications of the VIC model include the University of Washington’s Drought Monitor and forecast systems, and NASA’s land data assimilation systems.
+  Ongoing realtime applications of the VIC model include the University of Washington’s Drought Monitor and forecast systems (\url{http://hydro.washington.edu/forecast/monitor/drought/index.shtml}), and NASA’s land data assimilation systems (\url{http://ldas.gsfc.nasa.gov/nldas/}).
   Table \ref{table:vic_applications} provides additional examples of the use of VIC for hydrological, water resources, and water and energy budget applications.
 
-  Although the original VIC publication indicated its applicability within coupled land-atmosphere models, VIC has been predominantly applied in uncoupled modeling studies.
+  Although the original VIC publication indicated its applicability within coupled land-atmosphere models, VIC has predominantly been applied in uncoupled modeling studies.
   As a result, the software infrastructure surrounding the released version of the model has not been updated to support modern scientific computing tools such as parallel processing or advanced data formats (e.g NetCDF).
   The main loop order in the model was originally written in a time-before-space orientation.
   This configuration simplified the memory management within the model and facilitated parallelization without the use of multiprocessing software.
-  For these reasons, VIC applications within multi-model frameworks \citep[e.g. NASA LIS][]{Kumar_2006} and coupled land-atmosphere models \citep[e.g. RASM][]{Hamman_2016a} have therefore required significant custom reconfiguration of the model interface.
+  For these reasons, VIC applications within multi-model frameworks \citep[e.g. NASA LIS, ][]{Kumar_2006} and coupled land-atmosphere models \citep[e.g. RASM, ][]{Hamman_2016a} have therefore required significant custom reconfiguration of the model interface.
 
-  \subsection{Open Source}
-    Beginning in 2011, the VIC model has been licensed with the open source GNU General Public License version 2.
-    The motivation behind making the model source code completely open source was to encourage participation by the model user and development community-at-large and to increase scientific transparency in the model development and application process.
-    The VIC source code now uses the Git version control system and is publicly available on Github \url{https://github.com/UW-Hydro/VIC}.
-
-  \subsection{The VIC Community}
+  \subsection{The VIC Community and Open Source}
+    \label{sec:vic_community}
     The VIC Users email list-serve (\url{vic_users@u.washington.edu}) has more than 375 active members.
-    Analytics from the VIC website and documentation indicates that there are upwards of one-thousand individual VIC users (Figure \ref{fig:users}a).
+    Analytics from the VIC website and documentation indicates that there are upwards of one-thousand individual VIC users (Figure \ref{fig:vic_users}a).
     Citations of the original \citep{Liang_1994} continue to increase (Figure \ref{fig:vic_users}b).
     Since the VIC source code has been available in a public GitHub repository, over 100 users have checked out ``Forks''.
+    The authors are aware of a multiple ongoing developing efforts by the VIC community to implement new features.
+    The open source framework that we have implemented will facilitate mechanisms for the integration of model improvements from the greater VIC community into future VIC releases.
+
+    Beginning in 2011, the VIC model has been licensed with the open source GNU General Public License version 2.
+    The motivation behind making the model source code completely open source was to encourage participation by the model user and development community-at-large and to increase scientific transparency in the model development and application process.
+    The VIC source code now uses the Git version control system and is publicly available on Github (\url{https://github.com/UW-Hydro/VIC}).
+    While the majority of the VIC 5 development was done by researchers at the University of Washington, a few features and bug fixes were made by unsolicited contributors.
 
 \section{Data and Model Simulations}
+  \label{sec:data_and_sims}
   In this paper, we demonstrate the VIC model performance using four existing VIC model configurations: Stehekin, CONUS+, RASM, and Global.
   These model configurations are shown in Figure \ref{fig:vic_domains} and are detailed in Table \ref{table:model_sims}.
+  Scientific validation of the VIC 5 release includes point comparisons of VIC simulations with 66 FluxNET observations and 448 SNOTEL observations.
+  These comparison datasets are available...actually, we need to figure out if we can distribute these datasets.
 
 \section{Model Improvements}
-The reconfiguration has separated the physical core of the model from the driver, which is responsible for memory allocation, pre- and post-processing, and I/O.
-This reconfiguration is depicted in Figure \ref{fig:vic_config}, which details the reconfigured source code structure.
-VIC 5 includes four drivers that use the same physical model core:
-\begin{enumerate}
-  \item \textit{Classic Driver}: The classic driver supports legacy VIC configurations and runs in the traditional time-before-space configuration.
-  \item \textit{Image Driver}: The image driver includes a space-before-time configuration, NetCDF I/O, and uses MPI for parallel processing.
-  This configuration facilitates the direct coupling of streamflow routing, reservoir, and irrigation processes within VIC.
-  \item \textit{CESM Driver}: The image driver is the foundation of the CESM driver; which couples VIC to CESM’s CPL7 and a prognostic atmosphere.
-  \item \textit{Python Driver}: Finally, we have added a Python driver that provides access to the functions and datatypes of VIC’s physical core from a Python interface.
-\end{enumerate}
+  \label{sec:improvements}
+  The VIC 5 release includes a complete refactor of the model source code.
+  The reconfiguration has separated the physical core of the model from the driver, which is responsible for memory allocation, pre- and post-processing, and input and output (I/O).
+  The VIC 5 source code structure is depicted in Figure \ref{fig:vic_config}.
+  VIC 5 includes four drivers, each using the same physical model core:
+  \begin{enumerate}
+    \item \textit{Classic Driver}: The classic driver supports legacy VIC configurations and runs in the traditional time-before-space configuration.
+    \item \textit{Image Driver}: The image driver includes a space-before-time configuration, NetCDF I/O, and uses MPI for parallel processing.
+    This configuration facilitates the direct coupling of streamflow routing, reservoir, and irrigation processes within VIC.
+    \item \textit{CESM Driver}: The image driver is the foundation of the CESM driver; which couples VIC to CESM’s CPL7 and a prognostic atmosphere.
+    The initial application of the CESM driver is within the Regional Arctic System Model (RASM), a regional implementation of CESM.
+    Future applications of the VIC CESM driver could easily be applied within the global version of CESM.
+    \item \textit{Python Driver}: Finally, we have added a Python bindings that provide access to the functions and datatypes of VIC’s physical core from a Python interface.
+    Although the Python driver is currently only used for testing, this driver is uniquely suited for future data assimilation and large ensemble applications.
+  \end{enumerate}
+
+  TODO: introduce extensions framework
 
   \subsection{Parallel Computing}
-    The current version of the VIC model does not include horizontal transport between grid cells.
+    \label{sec:mpi}
+    The VIC model does not include horizontal transport between grid cells.
     In the past, this feature has allowed users to manually parallelize their VIC applications by running VIC simulations on completely separate computers, if need be.
-    Included in the image and CESM drivers in VIC 5, we have added formal parallel processing support utilizing the Message Passing Interface \citep[MPI][]{Gropp_1996} standard.
-    Leveraging the fact there is not horizontal transport between grid cells, the parallelization strategy that we have adopted only uses MPI utilities to facilitate Input and Output (I/O) operations.
+    Included in the image and CESM drivers in VIC 5, we have added formal parallel processing support utilizing the Message Passing Interface (MPI) standard \citep{Gropp_1996}.
+    Leveraging the independence of VIC grid points in terms of neighbor communication (i.e. horizontal transport between grid cells), the parallelization strategy that we have adopted only uses MPI utilities to facilitate I/O operations.
     Shared memory between MPI tasks is limited to model settings.
 
-    Figure \ref{fig:vic_scaling} demonstrates the scaling performance of the multiprocessing scheme applied in VIC 5 in terms model runtime and memory usage for the Stehekin, CONUS, RASM, and Global grid configurations.
+    Figure \ref{fig:vic_scaling} demonstrates the scaling performance of the multiprocessing scheme applied in VIC 5 in terms model runtime and memory usage for the CONUS, RASM, and Global model configurations.
     Discuss scaling and memory usage.
+    Joe to fill this paragraph in after scaling simulations have been run.
 
-    Potential for improvement using parallel IO.
+    We expect the scaling performance of the VIC image and CESM drivers to be further improved by the application of parallel IO and shared-memory parallel programming such as openMP.
+    Collective parallel reading and writing of netCDF files, made possible through the NetCDF-4 and HDF5 libraries, will dramatically reduce the amount of data passed via MPI processes and, in theory, should allow the model to scale well beyond the limits shown in Figure \ref{fig:vic_scaling}.
+    The initial parallelization of VIC has not applied any on-node shared-memory threading.
+    Because there is a certain amount of overhead associated with each MPI library call, we also expect that the application of a threading library, such as OpenMP, will lead to additional improvements in the model performance.
 
   \subsection{Input and Output}
+    \label{sec:io}
     The Image and CESM drivers use the NetCDF library for all I/O related to input parameters, meteorological forcings, and model output.
-    ``NetCDF is a set of software libraries and self-describing, machine-independent data formats that support the creation, access, and sharing of array-oriented scientific data. (quoted from web)''
-    Output files from the Image and CESM drivers are formatted such that they meet the ``NetCDF Climate and Forecast (CF) metadata conventions version 1.6'' \citep{Eaton_2003}.
+    NetCDF is a software library that reads and writes array-oriented scientific data.
+    It has been widely adopted among the geo-scientific modeling community and provides a convenient self-describing machine-independent data format.
+    Output files from the Image and CESM drivers are formatted such that they meet the NetCDF Climate and Forecast (CF) metadata conventions version 1.6 \citep{Eaton_2003}.
     The classic driver continues to support the legacy ASCII and binary input and output file formats.
-    VIC 5 has added some metadata to these file formats but they have basically remained the same since VIC 4.
+    VIC 5 has added some metadata to the ASCII file formats but they have basically remained the same since VIC 4.
 
     VIC 5 also has eliminated all hard coded model parameters from the body of the source code.
-    Users may now specify an optional ``parameters'' file to specify previously hard-coded values.
+    Users may now specify an optional ``parameters'' configuration file to set non-default model constants that were previously hard-coded values.
     This feature greatly improves the transparency and accessibility of the model.
 
   \subsection{Testing}
+    \label{sec:testing}
     VIC 5 introduces a robust test suite, now distributed with the model source code.
     The test suite is made up of six components:
 
@@ -224,47 +245,56 @@ VIC 5 includes four drivers that use the same physical model core:
       These tests demonstrate the current model behavior and are compared to previous releases to demonstrate the changes in the model physics.
       \item \textit{Performance}: With the addition of MPI to the Image and CESM drivers, a set of tools for assessing the parallel performance were needed.
       The performance tests asses timing and memory statistics of the VIC model.
+      Results from these tests are highlighted in Section \ref{sec:mpi}.
     \end{enumerate}
 
-    A subset of these tests are routinely run using the Travis CI continuous integration system.
+    A subset of these tests are routinely run using the Travis CI continuous integration system ( \url{https://travis-ci.org/} ).
     As the VIC developer community grows, this test system will be an important tool in maintaining the function of the supported drivers.
 
 \section{New Applications}
+  \label{sec:new_apps}
   The development of VIC 5 has enabled a series of new or improved model applications.
   These applications include the coupling of VIC to atmospheric models, incorporation within multi-model frameworks, or application of model sub-components that have previously been difficult to apply.
   Here we highlight a few of these new applications that we think are likely to be implemented:
 
   \subsection{Multi-model Frameworks}
+    \label{sec:multimodel}
     Multi-model frameworks such as NASA's LIS \citep{Kumar_2006} and WRF-Hydro \citep{Gochis_2013} have allowed the modeling community the opportunity to run simulations with multiple models from a consistent interface.
     While previous versions of VIC have been included in LIS, the model version is seldom updated due to the tedious nature of the work.
-    The reconfiguration of VIC 5 greatly simplifies the application of VIC within these frameworks and we expect that both will incorporate the new model.
+    The reconfiguration of VIC 5 greatly simplifies the application of VIC within these frameworks and we expect that both will incorporate the new model version.
 
   \subsection{Coupled Land-Atmosphere Modeling}
-    One of the main motivating factors in the development of VIC 5 was to enable coupling of VIC within RASM and CESM.
+    \label{sec:coupled_apps}
+    One of the primary motivating factors in the development of VIC 5 was to enable coupling of VIC within RASM and CESM.
     In RASM, VIC 5 is directly coupled to the CESM CPL7 coupler.
     This coupling allows VIC to be run with WRF as the atmospheric component.
     VIC may also be coupled to NASA's Nu-WRF through the LIS framework.
     At the time of writing, the coupling of VIC with Nu-WRF has not begun.
 
+  % Perhaps add a section on Forecast and Data-assimilation Applications
+  % \subsection{Forecast and Data-assimilation Applications}
+  %   \label{sec:forecast_apps}
+
 \conclusions[Discussion and Conclusions]
   Figure \ref{fig:vic_4v5} demonstrates that VIC 4 and VIC 5 are producing similar results.
   The two model versions have similar performance statistics when compared to observations.
-  TODO: complete.
+  \textit{Diana, let's get together to think of a few summary figures that 1) demonstrate that VIC 4 and 5 are behaving the same, and 2) summarize the science test simulations in an interesting way.}
 
-  Figure \ref{fig:vic_domain_results} demonstrate that VIC 5 is producing plausible results on a variety of spatial domains.
-  TODO: complete.
+  Figure \ref{fig:vic_domain_results} demonstrates that VIC 5 is producing plausible results on a variety of spatial domains.
+  \textit{Yixin, let's get together to think of a way to demonstrate that VIC 5 has been run for each of the configurations for this paper and that the results.}
 
   The updated model configuration facilitates the direct coupling new and existing subcomponents to VIC.
-  Work currently underway is using the extensions framework discussed above to tightly couple the RVIC streamflow routing model with the image driver.
-  Future extension development is expected to add reservoirs, irrigation, glaciers, dynamic vegetation, and crop models to VIC.
-  While some of these had been partially developed with VIC 4, the limitations imposed by the simple lack of infrastructure have preclude their wide use in the VIC community.
+  Work currently underway is using the extensions framework discussed in Section \ref{sec:improvements} to tightly couple the RVIC streamflow routing model with the image driver.
+  Future extension development is also expected to add reservoirs, irrigation, glaciers, dynamic vegetation, and crop models to VIC.
+  While some of these had been partially developed with VIC 4, the limitations imposed by the lack of infrastructure have preclude their wider application in the VIC community.
 
   With the open-source status of VIC and the release of VIC 5, we hope to see growing community presence in the maintenance and development of the model.
 
 \section{Code Availability}
+\label{appendix:code_avail}
 
   Appendix \ref{appendix:source_code} describes the locations and license information for the the VIC source code and documentation.
-  The scripts and VIC configurations used as demonstrations for this paper, including model parameters, namelists, are provided in this Github repository: \url{https://github.com/jhamman/VIC5_paper}.
+  The source code, input data, and VIC configurations used as demonstrations for this paper, are provided in this Github repository: \url{https://github.com/jhamman/VIC5_paper}.
 
 \appendix
 \section{VIC Model Source Code and Documentation}
@@ -274,7 +304,7 @@ VIC 5 includes four drivers that use the same physical model core:
 \begin{itemize}
 	\item \textit{Name}: Zenodo
 	\item \textit{Persistent identifier}: doi:10.5281/zenodo.22307 (TODO: UPDATE!)
-	\item \textit{Licence}: GNU General Public License, version 2 (GPL-2.0)
+	\item \textit{License}: GNU General Public License, version 2 (GPL-2.0)
 	\item \textit{Publisher}:  Zenodo
 	\item \textit{Version published}: VIC 5.0.0
 	\item \textit{Date published}: TBD
@@ -284,8 +314,8 @@ VIC 5 includes four drivers that use the same physical model core:
 
 \begin{itemize}
 	\item \textit{Name}: GitHub
-	\item \textit{Persistent identifier}: \url{http://github.com/pydata/xarray}}
-	\item \textit{Licence}: GNU General Public License, version 2 (GPL-2.0)
+	\item \textit{Identifier}: \url{https://github.com/UW-Hydro/VIC/}}
+	\item \textit{License}: GNU General Public License, version 2 (GPL-2.0)
 	\item \textit{Date published}: TBD
 \end{itemize}
 
@@ -293,8 +323,8 @@ VIC 5 includes four drivers that use the same physical model core:
 
 \begin{itemize}
 	\item \textit{Name}: ReadTheDocs
-	\item \textit{Persistent identifier}: \url{http://vic.readthedocs.io/en/vic.5.0.0/}
-	\item \textit{Licence}: GNU General Public License, version 2 (GPL-2.0)
+	\item \textit{Identifier}: \url{http://vic.readthedocs.io/en/vic.5.0.0/}
+	\item \textit{License}: GNU General Public License, version 2 (GPL-2.0)
 	\item \textit{Date published}: TBD
 \end{itemize}
 
@@ -354,7 +384,7 @@ VIC 5 includes four drivers that use the same physical model core:
 %%f
 \begin{figure}[t]
 \includegraphics[width=8.3cm]{VIC_users.jpg}
-\caption{Number of unique visitors to the VIC documentation website (http://vic.readthedocs.org) between September 1, 2015 and November 31, 2015. Data from Google Analytics (https://analytics.google.com).}
+\caption{Number of unique visitors to the VIC documentation website (\url{http://vic.readthedocs.org}) between September 1, 2015 and November 31, 2015. Data from Google Analytics (\url{https://analytics.google.com}).}
 \label{fig:vic_users}
 \end{figure}
 
@@ -403,7 +433,6 @@ VIC 5 includes four drivers that use the same physical model core:
 %
 \clearpage
 \begin{table}[]
-  \centering
   \caption{Examples of VIC applications}
   \label{table:vic_applications}
   \resizebox{\textwidth}{!}{%
@@ -445,10 +474,12 @@ VIC 5 includes four drivers that use the same physical model core:
     \hline
     Model Domain  & Resolution  & Timestep  & Grid Cells  & Forcings  \\
     \hline
-    $Stehekin$  & 1/8th-deg.  & 1-hr. & 16 & Livneh et al. 2015   \\
-    $CONUS$  & 1/16th-deg.  & 3-hr. & 333,579 & Livneh et al. 2015   \\
-    $Global$  & 1/2th-deg & 6-hr.  & 61,345 & CRU-NCEP   \\
-    $RASM$  & 50-km  & 20-min. & 25,996 & Coupled with WRF  \\
+    $Stehekin$  & 1/8th-deg.   & 1-hr.   & 16      & Maurer et al. 2002    \\
+    $CONUS$     & 1/16th-deg.  & 3-hr.   & 333,579 & Livneh et al. 2015   \\
+    $Global$    & 1/2th-deg    & 6-hr.   & 61,345  & CRU-NCEP   \\
+    $RASM$      & 50-km        & 20-min. & 25,996  & Coupled with WRF  \\
+    $SNOTEL$    & point        & 1-hr    & 448     & Observations  \\
+    $FLUXNET$   & point        & 1-hr    & 66      & Observations  \\
     \hline
     \label{table:model_sims}
   \end{tabular}
