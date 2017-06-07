@@ -131,12 +131,12 @@
   The image driver is the foundation of the CESM driver; which couples VIC to the Community Earth System Model's (CESM) flux coupler (CPL7) and a prognostic atmosphere.
   The Python driver provides interactive access to the functions and datatypes of VIC's physical core from a Python interface.
   Finally, VIC-5.0 is distributed with a robust test infrastructure, components of which routinely run during development using the Travis CI continuous integration service.
-  The work described here represents a significant step forward for the VIC user community in terms of support for both existing and new model applications.
+  The work described here represents a significant step forward for the VIC user community in terms of support for both existing and new model applications, reproducibility, and scientific robustness.
 \end{abstract}
 
 \introduction
   The Variable Infiltration Capacity (VIC) model \citep{Liang_1994} is a macro-scale semi-distributed hydrologic model.
-  This paper introduces VIC version 5, hereafter refered to as VIC-5, a new major release of the VIC model.
+  This paper introduces VIC version 5, hereafter referred to as VIC-5, a new major release of the VIC model.
   The goals of this paper are to describe the software, infrastructure, and science improvements to the version 5 release of the VIC model and to provide baseline model diagnostics in terms of computational performance.
   The initial VIC-5 release does not add new physical representation compared to the last release of VIC-4 development track (version 4.2.d).
   Instead, the development of VIC-5 focused on reconfiguring the legacy VIC source code to support a wider range of modern modeling applications.
@@ -174,6 +174,7 @@
   In this paper, we demonstrate the VIC model performance using a series of model simulations on the Regional Arctic System Model domain.
   This model domain is shown in Figure \ref{fig:vic_domain} and is detailed in Table \ref{table:tests}.
   Scientific validation of the VIC-5 release includes point comparisons of VIC simulations with 66 FluxNET [TED - provide citation] observations and 448 SNOTEL [citation?] observations.
+  DIANA: please fill in this section a bit more. We want to highlight why we use the datasets we do and where they are located.
 
 \section{Model Improvements}
   \label{sec:improvements}
@@ -181,13 +182,14 @@
   The reconfiguration has separated the physical core of the model from the driver, which is responsible for memory allocation, pre- and post-processing, and input and output (I/O).
   The VIC-5 source code structure is depicted in Figure \ref{fig:vic_config}.
   The initial VIC-5 release includes four drivers, each using the same physical model core:
+
   \begin{enumerate}
     \item \textit{Classic Driver}: The \textit{Classic Driver} supports legacy VIC configurations and runs in the traditional time-before-space configuration.
     It uses the ASCII and flat-binary file formats for I/O.
     \item \textit{Image Driver}: The \textit{Image Driver} includes a space-before-time configuration, NetCDF I/O \citep{Rew_1990}, and uses MPI for parallel processing \citep{Gropp_1996}.
     This configuration facilitates the direct coupling of streamflow routing, reservoir, and irrigation processes within VIC.
     \item \textit{CESM Driver}: The \textit{Image Driver} is the foundation of the CESM driver; which couples VIC to Community Earth System Model's \citep[CESM;][]{Hurrell_2013} flux coupler \citep[CPL7;][]{Craig_2012} and a prognostic atmosphere.
-    The initial application of the \textit{CESM Driver} is within RASM \citep{Hamman_2016a}, a regional implementation of CESM.
+    The initial application of the \textit{CESM Driver} is within the Regional Arctic System Model (RASM) \citep{Hamman_2016a}, a regional implementation of CESM.
     Future applications of the \textit{CESM Driver} could easily be applied within the global version of CESM.
     \item \textit{Python Driver}: Finally, we have added a Python bindings that provide access to the functions and datatypes of VIC’s physical core from a Python interface.
     Although the \textit{Python Driver} is currently only used for testing, this driver is uniquely suited for future interactive, data assimilation, or large ensemble applications.
@@ -205,20 +207,20 @@
     Leveraging the independence of VIC grid points in terms of neighbor communication (i.e. horizontal transport between grid cells), the parallelization strategy that we have adopted only uses MPI utilities to facilitate I/O operations.
     Shared memory between MPI tasks is limited to model settings.
 
-    Figure \ref{fig:vic_scaling} demonstrates the scaling performance of the parallelization scheme applied in VIC-5 in terms model throughput for the seven different RASM image driver model configurations, on both the \verb|thunder| and \verb|topaz| computers described in Table \ref{table:hardware}.
+    Figure \ref{fig:vic_scaling} demonstrates the scaling performance of the parallelization scheme applied in VIC-5 in terms model throughput for the seven different RASM image driver model configurations, on both the \verb|thunder| and \verb|gordon| computers described in Table \ref{table:hardware}.
     The different model configurations vary the \verb|FULL_ENERGY|, \verb|FROZEN_SOIL|, and \verb|CLOSE_ENERGY| options and are ranked by computational complexity.
     Because memory usage is modest in VIC (it is basically a 2d model), parallelization with MPI is mainly for I/O, facilitating single processor reads and writes.
     Consequently, the scaling shown in Figure \ref{fig:vic_scaling} is mostly a function of the computer's interconnect and disk speed.
 
-    For the simplist model configuration (\verb|WB no FS no CE 3 nodes|), VIC has remarkably high throughput but parallization beyond one node provides no further speedup.
+    For the simplest model configuration (\verb|WB no FS no CE 3 nodes|), VIC has remarkably high throughput but parallelization beyond one node provides no further speedup.
     This behavior is indicative of a program that is disk/interconnect limited.
     For the most complex model configuration (\verb|EB FS CE 50 nodes|), VIC has significantly lower throughput, but is shown to scale out beyond 288 processors.
     In this case, the computation time inside of the physics code of VIC is much higher than the I/O portions of the model.
 
     We expect the scaling performance of the VIC image and CESM drivers to be further improved by the application of parallel IO and shared-memory parallel programming such as OpenMP.
     Collective parallel reading and writing of netCDF files, made possible through the NetCDF-4 and HDF5 libraries, are expected to dramatically reduce the amount of data passed via MPI processes and, for computers with high-performance parallel disks, should allow the model to scale well beyond the limits shown in Figure \ref{fig:vic_scaling}.
-    The initial parallelization of VIC did not implemement any on-node shared-memory threading.
-    Because there is a certain amount of overhead associated with each MPI library call, we also expect that the application of a threading library, such as OpenMP, will lead to additional improvements in the model performance, specifically on computers with manycore processors.
+    The initial parallelization of VIC did not implement any on-node shared-memory threading.
+    Because there is a certain amount of overhead associated with each MPI library call, we also expect that the application of a threading library, such as OpenMP, will lead to additional improvements in the model performance, specifically on computers with many-core processors.
 
   \subsection{Input and Output}
     \label{sec:io}
@@ -241,6 +243,7 @@
     \begin{enumerate}
       \item \textit{Unit}: Unit tests are tests that check function level source code behavior.
       Using the Python Driver, many of the individual functions in VIC are tested for using the ``Py-Test'' unit test framework (\url{http://doc.pytest.org/}).
+      These functions are made available in within Python using the C Foreign Function Interface for Python (CFFI; \url{http://cffi.readthedocs.io/}).
       \item \textit{System}: The system tests check the behavior of the individual drivers.
       Examples of these tests include checks for exact restarts, binary equivalence for simulations run with and without MPI, and comparisons between drivers.
       \item \textit{Science}: The science tests utilize the classic driver to run point simulations at a selection of observation locations (e.g. SNOTEL or AMERIFLUX).
@@ -254,6 +257,7 @@
       Results from these tests are highlighted in Section \ref{sec:mpi}.
     \end{enumerate}
 
+    The VIC test suite was designed to serve two primary purposes: 1) automated diagnostics and benchmarking of model performance with similar coverage to what is provided in the ILAMB project \citep{Luo_2012}, and 2) automated build and unit tests to facilitate reproducibility and consistency between model developers.
     A subset of these tests are routinely run using the Travis CI continuous integration system (\url{https://travis-ci.org/UW-Hydro/VIC}).
     As the VIC developer community continues to grow, this test suite will be an important tool in maintaining the function of the supported drivers.
 
@@ -281,7 +285,7 @@
   %   \label{sec:forecast_apps}
 
 \conclusions[Discussion and Conclusions]
-  The inclusing of a comprehensive science testing framework within the VIC-5 repository, as introduced in Section \ref{sec:testing}, facilitates continuous and repeatable validation of the model throught the development process.
+  The inclusion of a comprehensive science testing framework within the VIC-5 repository, as introduced in Section \ref{sec:testing}, facilitates continuous and repeatable validation of the model throughout the development process.
   Figure \ref{fig:vic_4v5} shows a summary figures from the VIC SNOTEL portion of science testing package.
   This figure demonstrates that VIC-4 and VIC-5 are producing basically identical (r2 > 0.99) results and the two model versions have similar performance statistics when compared to observations (x and y respectively).
   Figure \ref{fig:vic_fluxes} demonstrates an example comparison from the FLUXNET portion of the science testing package, showing a comparison between VIC and flux tower observations for a subset of the sites included in the dataset.
@@ -389,8 +393,8 @@
 %%f
 \clearpage
 \begin{figure}[t]
-\includegraphics[width=8.3cm]{VIC_config.jpg}
-\caption{VIC source code structure after reconfiguration. }
+\includegraphics[width=6in]{VIC_config.jpg}
+\caption{The reconfigured VIC.5 source code structure. The ``Physical Core'' includes the scientific modules of VIC (e.g. routines that simulate the fluxes and states of the model) and is shared between all drivers. The individual drivers all use components of the ``Shared Driver'' to minimize code duplication at the driver level. Finally, the ``Extensions'' constitutes optional and driver specific sub-models.}
 \label{fig:vic_config}
 \end{figure}
 
@@ -400,29 +404,29 @@
 %f
 \clearpage
 \begin{figure}[t]
-\includegraphics[width=8.3cm]{RASM_Domain.png}
-\caption{Placeholder for RASM domain figure.}
+\includegraphics[width=6in]{RASM_Domain.png}
+\caption{Climatological average runoff (including baseflow) and evapotranspiration from the ``EB FS CE 50 nodes'' image driver simulation performed over the RASM domain. DIANA: please make this figure using the data from the above mentioned test.}
 \label{fig:vic_domain}
 \end{figure}
 
 \clearpage
 \begin{figure}[t]
-\includegraphics[width=8.3cm]{VIC_scaling.png}
-\caption{Placeholder for VIC image driver scaling tests.}
+\includegraphics[width=6in]{VIC_scaling.png}
+\caption{Model throughput for the seven model configurations run on the Thunder (SGI Ice X) and Gordon (Cray XC40) supercomputers. DIANA: please update with both computers and an easier to read figure.}
 \label{fig:vic_scaling}
 \end{figure}
 
 \clearpage
 \begin{figure*}[t]
-\includegraphics[width=5cm]{VIC_science_tests_SWE.png}
-\caption{Placeholder for VIC science testing summaries. Top: scatter plot of peak SWE at snotel stations.}
+\includegraphics[width=6in]{VIC_science_tests_SWE.png}
+\caption{Example summary figure from the VIC 5 SNOTEL science tests. A and B compare the results from VIC 4 and VIC 5 simulations, respectively. C compares the the results from the two VIC versions.}
 \label{fig:vic_4v5}
 \end{figure*}
 
 \clearpage
 \begin{figure*}[t]
 \includegraphics[width=12cm]{VIC_science_tests_fluxes.png}
-\caption{Placeholder for VIC science testing summaries. turbulent fluxes.}
+\caption{Example summary output from the VIC science testing package comparing the annual cycle of latent heat (top) and sensible heat (bottom) for four sample locations from VIC 5 (blue) to FluxNet observations (red).}
 \label{fig:vic_fluxes}
 \end{figure*}
 
@@ -506,15 +510,14 @@
 \textbf{}                                & \textbf{Thunder}                            & \textbf{Gordon}                             \\ \hline
 \textbf{Operated By}                     & AFRL                                        & Navy DSRC                                   \\ \hline
 \textbf{System}                          & SGI ICE X                                   & Cray XC40                                   \\ \hline
-\textbf{Peak PFlops}                     & 5.62                                        & 2                                           \\ \hline
+\textbf{Peak PFlops}                     & 5.62                                        & 2.0                                         \\ \hline
 \textbf{Parallel disk storage (Pbytes)}  & 12.2                                        & 2.29                                        \\ \hline
-\textbf{Total Nodes}                     & 3,216                                       & 1569                                        \\ \hline
+\textbf{Total Nodes}                     & 3,216                                       & 1,569                                       \\ \hline
 \textbf{Operating System}                & SGI's Performance Suite                     & Cray Linux Environment                      \\ \hline
 \textbf{Cores/Node}                      & 36                                          & 32                                          \\ \hline
 \textbf{Core Type}                       & Intel E5-2699v3                             & Intel Xeon E5-2698v3                        \\ \hline
 \textbf{Core Speed (GHz)}                & 2.3                                         & 2.3                                         \\ \hline
 \textbf{Memory/Node (Gbytes)}            & 128                                         & 128                                         \\ \hline
-\textbf{Accessible Memory/Node (Gbytes)} & 126                                         & 125                                         \\ \hline
 \textbf{Memory Model}                    & Shared on node. Distributed across cluster. & Shared on node. Distributed across cluster. \\ \hline
 \textbf{Interconnect Type}               & FDR 14x InfiniBand / Enhanced LX Hypercube  & Cray Aries / Dragonfly                      \\ \hline
 \end{tabular}
