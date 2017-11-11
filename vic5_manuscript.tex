@@ -64,6 +64,9 @@
 %\usepackage{rotating}
 % \usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows, positioning, fit, calc}
+
 % \DeclareGraphicsExtensions{.pdf, .png, .jpg, .eps}
 \graphicspath{ {./figs/} }
 %
@@ -206,14 +209,13 @@
 
   \section{VIC-5 Simulations}
     \label{sec:vic-5_simulations}
-    In this paper, we demonstrate the VIC model performance using a series of model simulations on the Regional Arctic System Model domain. This model domain is shown in Fig.~\ref{fig:vic_domain} and is detailed in Table \ref{table:tests}. Scientific validation of the VIC-5 release includes point comparisons of VIC simulations with 66 FluxNET [TED - provide citation] observations and 448 SNOTEL [citation?] observations.
-    DIANA: please fill in this Section a bit more. We want to highlight why we use the datasets we do and where they are located.
+    The science and release tests described above were performed prior to releasing VIC-5. The scientific validation of the VIC-5 release included point comparisons of VIC simulations with 66 FluxNET [TED - provide citation] observations and 448 SNOTEL [citation?] observations. DIANA: please fill in this Section a bit more. We want to highlight why we use the datasets we do and where they are located.
 
-    Fig.~\ref{fig:vic_scaling} demonstrates the scaling performance of the parallelization scheme applied in VIC-5 in terms model throughput for the seven different RASM image driver model configurations, on both the \verb|thunder| and \verb|gordon| computers described in Table \ref{table:hardware}. The different model configurations vary the \verb|FULL_ENERGY|, \verb|FROZEN_SOIL|, and \verb|CLOSE_ENERGY| options and are ranked by computational complexity. Because memory usage is modest in VIC (it is basically a 2d model), parallelization with MPI is mainly for I/O, facilitating single processor reads and writes. Consequently, the scaling shown in Fig.~\ref{fig:vic_scaling} is mostly a function of the computer's interconnect and disk speed.
+    In this paper, we demonstrate the parallel scaling performance of the \textit{Image Driver} using a series of model simulations on the 50-km near equal area Regional Arctic System Model domain. This model domain is shown in Fig.~\ref{fig:vic_domain} and is detailed in Table \ref{table:tests}. Here we demonstrate the scaling performance of the parallelization scheme applied in VIC-5 where model throughput is shown as a function of the size of the HPC resources used. Two RASM image driver model configurations were tested on two super-computers, \verb|Thunder| and \verb|Cheyenne|. Table \ref{table:hardware} provides details on the hardware specifications of each machine. The different model configurations represent two ends of the complexity spectrum available in the VIC model. Configuration A uses was run in water balance mode, where the energy balance is not explicitly closed, resulting less expensive model. Conversely, configuration B represents a much more complex model where the energy and water budgets are solved together using an interative solver. Both configurations are run over the same model domain with the same forcings, with the only differences being model configuration options. Because memory usage is modest in VIC (it is basically a 2d model), parallelization with MPI is mainly for computational speedup and to facilitate I/O, allowing for centralized reads and writes. In most cases, the scaling  is mostly a function of the computer's interconnect and disk speed.
 
-    For the simplest model configuration (\verb|WB no FS no CE 3 nodes|), VIC has remarkably high throughput but parallelization beyond one node provides no further speedup. This behavior is indicative of a program that is disk/interconnect limited. For the most complex model configuration (\verb|EB FS CE 50 nodes|), VIC has significantly lower throughput, but is shown to scale out beyond 288 processors. In this case, the computation time inside of the physics code of VIC is much higher than the I/O portions of the model.
+    Fig.~\ref{fig:vic_scaling} demonstrates the scaling performance for the two model configurations. For the simplest model configuration (A), VIC has remarkably high throughput but parallelization beyond one node provides no further speedup. This behavior is indicative of a program that is I/O limited. For the more complex model configuration (B), VIC has significantly lower throughput, but is shown to scale out efficiently beyond 288 processors. In this case, the computation time inside of the physics code of VIC is much higher than the I/O portions of the model.
 
-    We expect the scaling performance of the VIC image and CESM drivers to be further improved by the application of parallel IO. Collective parallel reading and writing of NetCDF files, made possible through the NetCDF-4 and HDF5 libraries, are expected to dramatically reduce the amount of data passed via MPI processes and, for computers with high-performance parallel disks, should allow the model to scale well beyond the limits shown in Fig.~\ref{fig:vic_scaling}.
+    We expect the scaling performance of the VIC image and CESM drivers to be further improved by the application of parallel IO. Collective parallel reading and writing of NetCDF files, made possible through the NetCDF-4 and HDF5 libraries, are expected to dramatically reduce the amount of data passed via MPI processes and, for computers with high-performance parallel disks, should allow the model to scale well beyond the limits shown in Fig.~\ref{fig:vic_scaling}. The development of this feature has been reserved for later versions in the VIC-5 development track.
 
   \section{The VIC Community and Open Source}
     \label{sec:vic_community}
@@ -321,41 +323,62 @@
 
 %%f
 \clearpage
+\tikzstyle{driver} = [rectangle, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black, fill=gray!60]
+\tikzstyle{extension} = [rectangle, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black]
+\tikzstyle{shared} = [rectangle, rounded corners, minimum width=4cm, minimum height=1cm,text centered, draw=black, fill=gray!30]
+
 \begin{figure}[t]
-\includegraphics[width=6in]{VIC_config.jpg}
-\caption{The reconfigured VIC.5 source code structure. The ``Physical Core'' includes the scientific modules of VIC (e.g. routines that simulate the fluxes and states of the model) and is shared between all drivers. The individual drivers all use components of the ``Shared Driver'' to minimize code duplication at the driver level. Finally, the ``Extensions'' constitutes optional and driver specific sub-models.}
+\centering
+\begin{tikzpicture}
+    \node (classic) [driver] {Classic Driver};
+    \node (image) [driver, right of=classic, xshift=1.5cm] {Image Driver};
+    \node (cesm) [driver, right of=image, xshift=1.5cm] {CESM Driver};
+    \node (python) [driver, right of=cesm, xshift=1.5cm] {Python Driver};
+
+    \node (shared) [shared, fit=(image)(cesm),below=of image.south west, anchor=north west, inner sep=0, yshift=0.5cm] {Shared Image Driver};
+
+    \node (ext1) [extension, below of=classic, yshift=-2cm] {Extensions};
+    \node (ext2) [extension, below of=image, yshift=-2cm] {Extensions};
+    \node (ext3) [extension, below of=cesm, yshift=-2cm] {Extensions};
+    \node (ext4) [extension, below of=python, yshift=-2cm] {Extensions};
+
+    \node (shared) [shared, fit=(ext1)(ext4),below=of ext1.south west,anchor=north west, inner sep=0, yshift=0.5cm] {Shared Driver Utilities};
+    \node (vic_run) [shared, fit=(ext1)(ext4),below=of shared.south west,anchor=north west, inner sep=0, yshift=0.5cm, fill=green!30] {VIC Physical Core};
+
+    \draw[thick,dotted] ($(classic.north west)+(-0.5,0.15)$) rectangle ($(shared.south east)+(0.5,-0.15)$);
+
+
+\end{tikzpicture}
+\caption{The reconfigured VIC-5 source code structure. The ``Physical Core'' includes the scientific modules of VIC (e.g. routines that simulate the fluxes and states of the model) and is used by all drivers. The remainder of the VIC source code structure is considered driver level code. Each driver uses components of the ``Shared Driver'' to minimize code duplication at the driver level. Likewise, the ``Shared Image Driver'' includes source code that is used by both the Image and CESM drivers (e.g. MPI and NetCDF utilities). Finally, the ``Extensions'' constitutes optional and driver specific sub-models.}
 \label{fig:vic_config}
 \end{figure}
 
-%
-%%% TWO-COLUMN FIGURES
-%
-%f
+
 \clearpage
 \begin{figure}[t]
-\includegraphics[width=6in]{RASM_Domain.png}
-\caption{Climatological average runoff (including baseflow) and evapotranspiration from the ``EB FS CE 50 nodes'' image driver simulation performed over the RASM domain. DIANA: please make this figure using the data from the above mentioned test.}
+\includegraphics[width=6in]{RASM_domain_fig.png}
+\caption{The 50-km near equal-area Regional Arctic System Model domain. The model domain is comprised of 25,996 grid cells. }
 \label{fig:vic_domain}
 \end{figure}
 
 \clearpage
 \begin{figure}[t]
 \includegraphics[width=6in]{VIC_scaling.png}
-\caption{Model throughput for the seven model configurations run on the Thunder (SGI Ice X) and Gordon (Cray XC40) supercomputers. DIANA: please update with both computers and an easier to read figure.}
+\caption{Model throughput for the seven model configurations run on the Thunder (SGI Ice X) and Gordon (Cray XC40) supercomputers.}
 \label{fig:vic_scaling}
 \end{figure}
 
 \clearpage
 \begin{figure*}[t]
 \includegraphics[width=6in]{VIC_science_tests_SWE.png}
-\caption{Example summary figure from the VIC 5 SNOTEL science tests. A and B compare the results from VIC 4 and VIC 5 simulations, respectively. C compares the the results from the two VIC versions.}
+\caption{Example summary figure from the VIC-5 SNOTEL science tests. A and B compare the results from VIC-4 and VIC-5 simulations, respectively. C compares the the results from the two VIC versions.}
 \label{fig:vic_4v5}
 \end{figure*}
 
 \clearpage
 \begin{figure*}[t]
 \includegraphics[width=12cm]{VIC_science_tests_fluxes.png}
-\caption{Example summary output from the VIC science testing package comparing the annual cycle of latent heat (top) and sensible heat (bottom) for four sample locations from VIC 5 (blue) to FluxNet observations (red).}
+\caption{Example summary output from the VIC-5 science testing package comparing the annual cycle of latent heat (top) and sensible heat (bottom) for four sample locations from VIC-5 (blue) to FluxNet observations (red).}
 \label{fig:vic_fluxes}
 \end{figure*}
 
@@ -434,22 +457,23 @@
 \centering
 \caption{Hardware used in VIC Image driver parallel scaling performance tests.}
 \label{table:hardware}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{|l|l|l|}
 \hline
-\textbf{}                                & \textbf{Thunder}                            & \textbf{Gordon}                             \\ \hline
-\textbf{Operated By}                     & AFRL                                        & Navy DSRC                                   \\ \hline
-\textbf{System}                          & SGI ICE X                                   & Cray XC40                                   \\ \hline
-\textbf{Peak PFlops}                     & 5.62                                        & 2.0                                         \\ \hline
-\textbf{Parallel disk storage (Pbytes)}  & 12.2                                        & 2.29                                        \\ \hline
-\textbf{Total Nodes}                     & 3,216                                       & 1,569                                       \\ \hline
-\textbf{Operating System}                & SGI's Performance Suite                     & Cray Linux Environment                      \\ \hline
-\textbf{Cores/Node}                      & 36                                          & 32                                          \\ \hline
-\textbf{Core Type}                       & Intel E5-2699v3                             & Intel Xeon E5-2698v3                        \\ \hline
+\textbf{}                                & \textbf{Thunder}                            & \textbf{Cheyenne}                           \\ \hline
+\textbf{Operated By}                     & Air Force Research Laboratory (AFRL)        & National Center for Atmospheric Research (NCAR) \\ \hline
+\textbf{System}                          & SGI ICE X                                   & SGI ICE XA                                  \\ \hline
+\textbf{Peak PFlops}                     & 5.62                                        & 5.34                                        \\ \hline
+\textbf{Parallel disk storage (Pbytes)}  & 12.2                                        & 52.7                                        \\ \hline
+\textbf{Total Nodes}                     & 3,216                                       & 4,032                                       \\ \hline
+\textbf{Cores/Node}                      & 36                                          & 36                                          \\ \hline
+\textbf{Core Type}                       & Intel Xeon E5-2699v3                        & Intel Xeon E5-2697V4                        \\ \hline
 \textbf{Core Speed (GHz)}                & 2.3                                         & 2.3                                         \\ \hline
-\textbf{Memory/Node (Gbytes)}            & 128                                         & 128                                         \\ \hline
+\textbf{Memory/Node (Gbytes)}            & 128                                         & 64 or 128                                   \\ \hline
 \textbf{Memory Model}                    & Shared on node. Distributed across cluster. & Shared on node. Distributed across cluster. \\ \hline
-\textbf{Interconnect Type}               & FDR 14x InfiniBand / Enhanced LX Hypercube  & Cray Aries / Dragonfly                      \\ \hline
+\textbf{Interconnect Type}               & FDR 14x InfiniBand / Enhanced LX Hypercube  & Mellanox EDR InfiniBand                     \\ \hline
 \end{tabular}
+}
 \end{table}
 %
 %%% NUMBERING OF FIGURES AND TABLES
