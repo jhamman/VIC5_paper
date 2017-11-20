@@ -1,0 +1,78 @@
+MODEL_STEPS_PER_DAY  8 # number of model time steps in 24 hour period
+SNOW_STEPS_PER_DAY   8 # number of snow model time steps in 24 hour period
+RUNOFF_STEPS_PER_DAY 8 # number of runoff time steps in 24 hour period
+STARTYEAR            1949 # year model simulation starts
+STARTMONTH           1 # month model simulation starts
+STARTDAY             1 # day model simulation starts
+ENDYEAR              1949
+ENDMONTH             12
+ENDDAY               31
+CALENDAR             STANDARD
+FULL_ENERGY          FALSE # calculate full energy balance
+FROZEN_SOIL          FALSE # calculate frozen soils
+#######################################################################
+AERO_RESIST_CANSNOW  AR_410
+GRND_FLUX_TYPE       GF_410
+QUICK_FLUX           TRUE
+QUICK_SOLVE          FALSE
+NOFLUX               TRUE
+IMPLICIT             FALSE
+EXP_TRANS            FALSE
+#                    SNOW OPTIONS
+SNOW_DENSITY         DENS_SNTHRM
+BLOWING              FALSE
+BLOWING_VAR_THRESHOLD FALSE
+BLOWING_CALC_PROB    FALSE
+BLOWING_SIMPLE       TRUE
+BLOWING_FETCH        FALSE
+BLOWING_SPATIAL_WIND FALSE
+CORRPREC             FALSE
+CLOSE_ENERGY         FALSE
+COMPUTE_TREELINE     FALSE
+SPATIAL_FROST        FALSE
+SPATIAL_SNOW         FALSE
+TFALLBACK            TRUE
+SHARE_LAYER_MOIST    TRUE
+CANOPY_LAYERS        3
+RC_MODE              RC_JARVIS
+#######################################################################
+#                    DOMAIN INFO
+#######################################################################
+DOMAIN               /work2/projects/rasm/inputdata/share/domains/domain.lnd.wr50a_ar9v4.100920.nc
+DOMAIN_TYPE          LAT yc
+DOMAIN_TYPE          LON xc
+DOMAIN_TYPE          MASK mask
+DOMAIN_TYPE          AREA area
+DOMAIN_TYPE          FRAC frac
+DOMAIN_TYPE          YDIM nj
+DOMAIN_TYPE          XDIM ni
+#######################################################################
+#                    Forcing Files and Parameters
+#                    netcdf forcing files will be of the form: <FORCING1>YYYY.nc
+#######################################################################
+FORCING1             /p/work1/workspace/jhamman/vic5_forcings/sheffield.all.wr50a.
+FORCE_TYPE           AIR_TEMP tas # Average air temperature, C
+FORCE_TYPE           PREC prcp # Total precipitation (rain and snow), mm
+FORCE_TYPE           PRESSURE pres # Atmospheric pressure, kPa
+FORCE_TYPE           SWDOWN dswrf # Incoming shortwave, W/m2
+FORCE_TYPE           LWDOWN dlwrf # Incoming longwave radiation, W/m2
+FORCE_TYPE           VP vp # Vapor pressure, kPa
+FORCE_TYPE           WIND wind # Wind speed, m/s
+WIND_H               10.0 # height of wind speed measurement
+#######################################################################
+#                    Land Surface Files and Parameters
+#######################################################################
+PARAMETERS           /home/gergel/vic5_inputdata/vic_params_wr50a_vic5.0.dev_20160328.nc
+NODES                3 # number of soil thermal nodes
+LOG_DIR              /home/jhamman/vic5_scaling_tests/logs/
+#######################################################################
+#                    Output Files and Parameters
+#######################################################################
+RESULT_DIR      /workspace/jhamman/vic5_scaling_results/
+OUTFILE         noFullEnergy_noFrozenSoil_noCloseEnergy_3Nodes.Scaling
+AGGFREQ         NDAYS 365
+HISTFREQ        NDAYS 365
+COMPRESS        FALSE
+OUT_FORMAT      NETCDF4
+OUTVAR          OUT_TIME_VICRUN_WALL * * AGG_TYPE_AVG
+OUTVAR          OUT_TIME_VICRUN_CPU  * * AGG_TYPE_AVG

@@ -1,0 +1,30 @@
+----------------- START VIC SCALING PROFILE -----------------
+
+Date                      : 2017-11-16 15:07:50.472091
+Machine                   : thunder03
+User                      : jhamman
+VIC Test Git Version      : VIC.5.0.0-391-g26f88-dirty
+
+VIC Executable            : /home/jhamman/VIC/vic/drivers/image/vic_image.exe
+VIC Global Parameter File : ~/vic5_scaling_tests/global_params/FullEnergy_FrozenSoil_CloseEnergy_50Nodes.txt
+
+VIC Executable Version Info
+---------------------------
+$vic_version
+Cores | Threads | Time (Seconds)
+--------------------------------
+ 1152 |     1 | 3714.000000
+   32 |    36 | 5853.000000
+  576 |     1 | 5130.000000
+  288 |     1 | 7505.000000
+   16 |    36 | 9505.000000
+  144 |     1 | 13146.000000
+    8 |    36 | 16484.000000
+    4 |    72 | 21410.000000
+   72 |     1 | 24187.000000
+    4 |    36 | 30233.000000
+    2 |    72 | 38694.000000
+   36 |     1 | 44399.000000
+    2 |    36 | 56557.000000
+    1 |    72 | 73765.000000
+    1 |    36 | 108365.000000
