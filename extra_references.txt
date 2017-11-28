@@ -1,0 +1,4 @@
+Baldocchi, D., E. Falge, L. Gu, R. Olson, D. Hollinger, S. Running, P. Anthoni, C. Bernhofer, K. Davis, and R. Evans (2001), FLUXNET: A new tool to study the temporal and spatial variability of ecosystem-scale carbon dioxide, water vapor, and energy flux densities, Bulletin of the American Meteorological Society, 82(11), 2415-2434. 
+Baldocchi, D., R. Valentini, S. Running, W. Oechel, and R. Dahlman (1996), Strategies for measuring and modelling carbon dioxide and water vapour fluxes over terrestrial ecosystems, Global Change Biology, 2(3), 159-168. 
+Bohn, T. J., and E. R. Vivoni, 2016: Process-based characterization of evapotranspiration sources over the North American Monsoon region, Water Resour. Res., 52(1), 358-384, doi: 10.1002/2015WR017934.
+
