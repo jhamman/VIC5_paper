@@ -242,10 +242,52 @@
 
   With the open-source status of VIC and the release of VIC-5, we hope to see growing community activity in the maintenance and development of the model. The reconfiguration of the model source code and the addition of an extensions framework will support a range of model developments.
 
-Ted's extra references:
-Baldocchi, D., E. Falge, L. Gu, R. Olson, D. Hollinger, S. Running, P. Anthoni, C. Bernhofer, K. Davis, and R. Evans (2001), FLUXNET: A new tool to study the temporal and spatial variability of ecosystem-scale carbon dioxide, water vapor, and energy flux densities, Bulletin of the American Meteorological Society, 82(11), 2415-2434.
-Baldocchi, D., R. Valentini, S. Running, W. Oechel, and R. Dahlman (1996), Strategies for measuring and modelling carbon dioxide and water vapour fluxes over terrestrial ecosystems, Global Change Biology, 2(3), 159-168.
-Bohn, T. J., and E. R. Vivoni, 2016: Process-based characterization of evapotranspiration sources over the North American Monsoon region, Water Resour. Res., 52(1), 358-384, doi: 10.1002/2015WR017934.
+Bulletted list of major VIC features post-Liang et al 1994:
+\begin{itemize}
+\item Vegetation
+\begin{itemize}
+\item Fractional canopy coverage; daily timeseries of phenology \citep{Bohn_2016}
+\item Resistance factor approach to canopy resistance \citep{Wigmosta_1994}
+\end{itemize}
+\item Lake/wetland
+\begin{itemize}
+\item Lake/wetland model \citep{Bowling_2010}
+\end{itemize}
+\item Soil
+\begin{itemize}
+\item Implicit soil temperature scheme with optional exponential node distribution \citep{Adam_2008}
+\item Soil temperature statistical heterogeneity \citep{Cherkauer_2003}
+\item Finite difference soil temperature scheme with frozen soil\citep{Cherkauer_1999}
+\item Exponential (quick-flux) soil temperature profile \citep{Liang_1999}
+\end{itemize}
+\item Snow
+\begin{itemize}
+\item Multi-layer snow pack \citep{Andreadis_2009}
+\item Blowing snow sublimation \citep{Bowling_2004}
+\item Elevation (snow) bands \citep{Nijssen_1997}
+\end{itemize}
+\end{itemize}
+
+References for bulletted list:
+\begin{itemize}
+\item Adam, J.C., and D.P. Lettenmaier, 2008: Application of new precipitation and reconstructed streamflow products to streamflow trend attribution in Northern Eurasia, J. Climate, 21(8), 1807-1828.
+\item Andreadis, K., P. Storck, and D. P. Lettenmaier, 2009: Modeling snow accumulation and ablation processes in forested environments, Water Resour. Res., 45, W05429, doi:10.1029/2008WR007042.
+\item Bohn, T. J., and E. R. Vivoni, 2016: Process-based characterization of evapotranspiration sources over the North American Monsoon region, Water Resour. Res., 52(1), 358-384, doi: 10.1002/2015WR017934.
+\item Bowling, L. C., J. W. Pomeroy and D. P. Lettenmaier, 2004: Parameterization of blowing snow sublimation in a macroscale hydrology model, J. Hydromet., 5(5), 745-762, doi:10.1175/1525-7541.
+\item Bowling, L.C. and D.P. Lettenmaier, 2010: Modeling the effects of lakes and wetlands on the water balance of Arctic Environments, J. Hydromet., 11, 276-295, doi:10.1175/2009JHM1084.1.
+\item Cherkauer, K. A. and D. P. Lettenmaier, 1999: Hydrologic effects of frozen soils in the upper Mississippi River basin, J. Geophys. Res., 104(D16), 19,599-19,610.
+\item Cherkauer, K. A., L. C. Bowling, and D. P. Lettenmaier, 2003: Variable infiltration capacity cold land process model updates, Global and Planetary Change, 38, 151-159.
+\item Liang, X., E. F. Wood, and D. P. Lettenmaier, 1999: Modeling ground heat flux in land surface parameterization schemes, J. Geophys. Res., 104(D8), 9581-9600.
+\item Nijssen, B., D. P. Lettenmaier, X. Liang, S. W. Wetzel, and E. F. Wood, 1997: Streamflow simulation for continental-scale river basins, Water Resour. Res., 33(4), 711-724.
+\item Wigmosta, M. S., L. W. Vail, and D. P. Lettenmaier, 1994: A distributed hydrology-vegetation model for complex terrain, Water Resour. Res., 30(6), 1665-1679.
+\end{itemize}
+
+References for Ameriflux data (Bohn and Vivoni (2016) is in there because that's where the soil/veg params were set up, gaps filled with Mauerer et al meteorology, and VIC performance first evaluated; but obviously not a reference for the observations themselves):
+\begin{itemize}
+\item Baldocchi, D., E. Falge, L. Gu, R. Olson, D. Hollinger, S. Running, P. Anthoni, C. Bernhofer, K. Davis, and R. Evans (2001), FLUXNET: A new tool to study the temporal and spatial variability of ecosystem-scale carbon dioxide, water vapor, and energy flux densities, Bulletin of the American Meteorological Society, 82(11), 2415-2434.
+\item Baldocchi, D., R. Valentini, S. Running, W. Oechel, and R. Dahlman (1996), Strategies for measuring and modelling carbon dioxide and water vapour fluxes over terrestrial ecosystems, Global Change Biology, 2(3), 159-168.
+\item Bohn, T. J., and E. R. Vivoni, 2016: Process-based characterization of evapotranspiration sources over the North American Monsoon region, Water Resour. Res., 52(1), 358-384, doi: 10.1002/2015WR017934.
+\end{itemize}
 
 \section{Code Availability}
 \label{appendix:code_avail}
