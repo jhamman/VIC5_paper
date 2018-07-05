@@ -254,7 +254,7 @@
       \item \textit{Performance}: With the addition of parallel processing to the \textit{Image} and \textit{CESM drivers}, a set of tools for assessing the parallel performance were needed. The performance tests assess timing and memory statistics of the VIC model. Results from these tests are highlighted in Sect. \ref{sec:results}.
     \end{enumerate}
 
-    The \textit{Build}, \textit{Unit}, \textit{System}, and \textit{Examples} tests are routinely run using the Travis CI continuous integration system (\url{https://about.travis-ci.com/}, \url{https://travis-ci.org/UW-Hydro/VIC}) where the VIC test suite is executed using multiple compilers (GNU and Clang), MPI libraries (MPICH and Open-MPI) and computational architectures (Linux and OS X). VIC's Travis CI workflow includes the following steps: 1) selection of virtual machine with preinstalled environments, 2) download of VIC source code and test datasets from GitHub, 3) compilation of specific driver along with Python unit tests, and 4) execution of test simulations for the specific driver implementation (e.g. image). If any of the tests in these steps fail for any part of the test matrix, Travis CI returns a failed test status to the VIC GitHub page. This functionality is routinely used in evaluating VIC modifications that are suggested on GitHub via pull requests. VIC-5 has also been tested with the PGI, Intel, and Cray compilers but they are not used in Travis CI because of licensing issues.
+    The \textit{Build}, \textit{Unit}, \textit{System}, and \textit{Examples} tests are routinely run using the Travis CI continuous integration system (\url{https://about.travis-ci.com/}, \url{https://travis-ci.org/UW-Hydro/VIC}) where the VIC test suite is executed using multiple compilers (GNU and Clang), MPI libraries (MPICH and Open-MPI) and computational architectures (Linux and OS X). VIC's Travis CI workflow includes the following steps: 1) selection of virtual machine with preinstalled environments, 2) download of VIC source code and test datasets from GitHub, 3) compilation of specific driver along with Python unit tests, and 4) execution of test simulations for the specific driver implementation (e.g. image). If any of the tests in these steps fail for any part of the test matrix, Travis CI returns a failed test status to the VIC GitHub page. This functionality is routinely used in evaluating VIC modifications that are suggested on GitHub via pull requests. VIC-5 has also been tested with the PGI, Intel, and Cray compilers, however, they are not used by default in the Travis CI test system.
 
   \subsection{Model Distribution and Documentation}
 
@@ -443,11 +443,9 @@ Since the original release of the VIC model and the original publication of \cit
 \clearpage
 \begin{figure*}[t]
 \includegraphics[width=12cm]{VIC_science_tests_fluxes.png}
-\caption{Example summary output from the VIC-5 science testing package comparing the annual cycle of latent heat (top) and sensible heat (bottom) for four sample locations for VIC-5 (blue) to FluxNet observations (red). The shaded range represents the interannual variability (+/- 0.5 std. dev.).}
+\caption{Example summary output from the VIC-5 science testing package comparing the annual cycle of latent heat (top) and sensible heat (bottom) for four sample locations for VIC-4 (red) and VIC-5 (blue) to FluxNet observations (gray). The shaded range represents the interannual variability (+/- 0.5 std. dev.). The $r^2$ statistic shown in the upper-left corner is calculated using the hourly time series from the observations and model output from VIC-4 and VIC-5. The $r^2$ statistic comparing VIC-4 and VIC-5 is 1.00 for all sites and is not shown on this figure.}
 \label{fig:vic_fluxes}
 \end{figure*}
-
-% TODO -add vic 4 results.
 
 \clearpage
 \begin{figure}[t]
