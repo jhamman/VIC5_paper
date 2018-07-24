@@ -64,9 +64,9 @@
 %\usepackage{rotating}
 % \usepackage{graphicx}
 \usepackage{hyperref}
-%  For figure 1
-\usepackage{tikz}
-\usetikzlibrary{shapes.geometric, arrows, positioning, fit, calc}
+%  For figure 1, see fig1.tex
+% \usepackage{tikz}
+% \usetikzlibrary{shapes.geometric, arrows, positioning, fit, calc}
 % For rotated tables
 % \usepackage{geometry}
 % \usepackage{pdflscape}
@@ -403,60 +403,63 @@ Since the original release of the VIC model and the original publication of \cit
 
 %%f
 \clearpage
-\tikzstyle{driver} = [rectangle, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black, fill=gray!60]
-\tikzstyle{extension} = [rectangle, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black]
-\tikzstyle{shared} = [rectangle, rounded corners, minimum width=4cm, minimum height=1cm,text centered, draw=black, fill=gray!30]
 
-\begin{figure}[t]
-\centering
-\begin{tikzpicture}
-    \node (classic) [driver] {Classic Driver};
-    \node (image) [driver, right of=classic, xshift=1.5cm] {Image Driver};
-    \node (cesm) [driver, right of=image, xshift=1.5cm] {CESM Driver};
-    \node (python) [driver, right of=cesm, xshift=1.5cm] {Python Driver};
-
-    \node (shared) [shared, fit=(image)(cesm),below=of image.south west, anchor=north west, inner sep=0, yshift=0.5cm] {Shared Image Driver};
-
-    \node (ext1) [extension, below of=classic, yshift=-2cm] {Extensions};
-    \node (ext2) [extension, below of=image, yshift=-2cm] {Extensions};
-    \node (ext3) [extension, below of=cesm, yshift=-2cm] {Extensions};
-    \node (ext4) [extension, below of=python, yshift=-2cm] {Extensions};
-
-    \node (shared) [shared, fit=(ext1)(ext4),below=of ext1.south west,anchor=north west, inner sep=0, yshift=0.5cm] {Shared Driver Utilities};
-    \node (vic_run) [shared, fit=(ext1)(ext4),below=of shared.south west,anchor=north west, inner sep=0, yshift=0.5cm, fill=green!30] {VIC Physical Core};
-
-    \draw[thick,dotted] ($(classic.north west)+(-0.5,0.15)$) rectangle ($(shared.south east)+(0.5,-0.15)$);
-
-
-\end{tikzpicture}
+% \tikzstyle{driver} = [rectangle, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black, fill=gray!60]
+% \tikzstyle{extension} = [rectangle, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black]
+% \tikzstyle{shared} = [rectangle, rounded corners, minimum width=4cm, minimum height=1cm,text centered, draw=black, fill=gray!30]
+%
+% \begin{figure}[t]
+% \centering
+% \begin{tikzpicture}
+%     \node (classic) [driver] {Classic Driver};
+%     \node (image) [driver, right of=classic, xshift=1.5cm] {Image Driver};
+%     \node (cesm) [driver, right of=image, xshift=1.5cm] {CESM Driver};
+%     \node (python) [driver, right of=cesm, xshift=1.5cm] {Python Driver};
+%
+%     \node (shared) [shared, fit=(image)(cesm),below=of image.south west, anchor=north west, inner sep=0, yshift=0.5cm] {Shared Image Driver};
+%
+%     \node (ext1) [extension, below of=classic, yshift=-2cm] {Extensions};
+%     \node (ext2) [extension, below of=image, yshift=-2cm] {Extensions};
+%     \node (ext3) [extension, below of=cesm, yshift=-2cm] {Extensions};
+%     \node (ext4) [extension, below of=python, yshift=-2cm] {Extensions};
+%
+%     \node (shared) [shared, fit=(ext1)(ext4),below=of ext1.south west,anchor=north west, inner sep=0, yshift=0.5cm] {Shared Driver Utilities};
+%     \node (vic_run) [shared, fit=(ext1)(ext4),below=of shared.south west,anchor=north west, inner sep=0, yshift=0.5cm, fill=green!30] {VIC Physical Core};
+%
+%     \draw[thick,dotted] ($(classic.north west)+(-0.5,0.15)$) rectangle ($(shared.south east)+(0.5,-0.15)$);
+%
+%
+% \end{tikzpicture}
+\begin{figure*}[t]
+\includegraphics[width=6in]{f01.png}
 \caption{The reconfigured VIC-5 source code structure. The ``Physical Core'' includes the scientific modules of VIC (e.g. routines that simulate the fluxes and states of the model) and is used by each of the four drivers. The remainder of the VIC source code structure is considered driver-level code. Each driver uses components of the \textit{Shared Driver} to minimize code duplication at the driver level. Likewise, the \textit{Shared Image Driver} includes source code that is used by both the \textit{Image} and \textit{CESM drivers} (e.g. MPI and NetCDF utilities). Finally, the ``Extensions'' constitutes optional and driver specific sub-models.}
 \label{fig:vic_config}
-\end{figure}
+\end{figure*}
 
 \clearpage
 \begin{figure*}[t]
-\includegraphics[width=6in]{VIC_science_tests_SWE.png}
+\includegraphics[width=6in]{f02.png}
 \caption{Example summary figure from the VIC-5 SNOTEL science tests. Panels A and B compare observed snow water equivalent (SWE) from SNOTEL sites to simulated SWE from VIC-4 (A) and VIC-5 (B). Panel C compares the results from the two VIC versions.}
 \label{fig:vic_4v5}
 \end{figure*}
 
 \clearpage
 \begin{figure*}[t]
-\includegraphics[width=12cm]{VIC_science_tests_fluxes.png}
+\includegraphics[width=6in]{f03.png}
 \caption{Example summary output from the VIC-5 science testing package comparing the annual cycle of latent heat (top) and sensible heat (bottom) for four sample locations for VIC-4 (red) and VIC-5 (blue) to FluxNet observations (gray). The shaded range represents the interannual variability (+/- 0.5 std. dev.). The $r^2$ statistic shown in the upper-left corner is calculated using the hourly time series from the observations and model output from VIC-4 and VIC-5. The $r^2$ statistic comparing VIC-4 and VIC-5 is 1.00 for all sites and is not shown on this figure.}
 \label{fig:vic_fluxes}
 \end{figure*}
 
 \clearpage
 \begin{figure}[t]
-\includegraphics[width=6in]{RASM_domain_fig.png}
+\includegraphics[width=6in]{f04.png}
 \caption{The 50-km near equal-area Regional Arctic System Model (RASM) domain. The model domain is comprised of 25,996 grid cells. Shading denotes mean annual evapotranspiration from a test simulation run with model configuration (B) as described in Section \ref{sec:vic-5_simulations}.}
 \label{fig:vic_domain}
 \end{figure}
 
 \clearpage
 \begin{figure}[t]
-\includegraphics[width=6in]{VIC_scaling.png}
+\includegraphics[width=6in]{f05.png}
 \caption{Model throughput for the two model configurations described in Section \ref{sec:vic-5_simulations} run on the Thunder (SGI Ice X) supercomputer. The MPI-only simulations are shown in blue and the Hybrid OpenMP-MPI simulations are shown in orange.}
 \label{fig:vic_scaling}
 \end{figure}

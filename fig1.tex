@@ -1,0 +1,32 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows, positioning, fit, calc}
+
+\begin{document}
+
+\tikzstyle{driver} = [rectangle, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black, fill=gray!60]
+\tikzstyle{extension} = [rectangle, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black]
+\tikzstyle{shared} = [rectangle, rounded corners, minimum width=4cm, minimum height=1cm,text centered, draw=black, fill=gray!30]
+
+\begin{tikzpicture}
+
+    \node (classic) [driver] {Classic Driver};
+    \node (image) [driver, right of=classic, xshift=1.5cm] {Image Driver};
+    \node (cesm) [driver, right of=image, xshift=1.5cm] {CESM Driver};
+    \node (python) [driver, right of=cesm, xshift=1.5cm] {Python Driver};
+
+    \node (shared) [shared, fit=(image)(cesm),below=of image.south west, anchor=north west, inner sep=0, yshift=0.5cm] {Shared Image Driver};
+
+    \node (ext1) [extension, below of=classic, yshift=-2cm] {Extensions};
+    \node (ext2) [extension, below of=image, yshift=-2cm] {Extensions};
+    \node (ext3) [extension, below of=cesm, yshift=-2cm] {Extensions};
+    \node (ext4) [extension, below of=python, yshift=-2cm] {Extensions};
+
+    \node (shared) [shared, fit=(ext1)(ext4),below=of ext1.south west,anchor=north west, inner sep=0, yshift=0.5cm] {Shared Driver Utilities};
+    \node (vic_run) [shared, fit=(ext1)(ext4),below=of shared.south west,anchor=north west, inner sep=0, yshift=0.5cm, fill=green!30] {VIC Physical Core};
+
+    \draw[thick,dotted] ($(classic.north west)+(-0.5,0.15)$) rectangle ($(shared.south east)+(0.5,-0.15)$);
+
+
+\end{tikzpicture}
+\end{document}
