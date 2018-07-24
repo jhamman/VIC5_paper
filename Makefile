@@ -36,4 +36,10 @@ once:
 debug:
 		$(LATEX) $(LATEXOPT) $(MAIN)
 
+figs: figs/f01.png
+
+figs/f01.png:
+		$(LATEX) $(LATEXOPT) fig1.tex
+		convert -density 300 fig1.pdf -quality 90 figs/f01.png
+
 .PHONY: clean force once all
